@@ -56,6 +56,16 @@ static void PrintTokenType(TokenType token_type)
 	printf("%-10s %s\n", yytext, gTokenNames[token_type - T_Void]);
 }
 
+/* Function: PrintSingleCharToken
+ * ------------------------------
+ * This function prints out the specified single character token, along with
+ * the lexeme just scanned
+ */
+static void PrintSingleCharToken(int token)
+{
+	printf("%-10s %c\n", yytext, token);
+}
+
 %}
 
  /* The section before the first %% is the Definitions section of the lex
@@ -100,6 +110,31 @@ NewArray    PrintTokenType(T_NewArray);
 Print       PrintTokenType(T_Print);
 ReadInteger PrintTokenType(T_ReadInteger);
 ReadLine    PrintTokenType(T_ReadLine);
+
+ /* Recognize punctuation and single-char operators and return the ASCII value
+  * as the token.
+  * Operator and punctuation characters used by the language includes:
+  *        + - * / % \ < <= > >= = == != && || ! ; , . [] [ ] ( ) { }
+  */
+"+"  PrintSingleCharToken('+');
+"-"  PrintSingleCharToken('-');
+"*"  PrintSingleCharToken('*');
+"/"  PrintSingleCharToken('/');
+"%"  PrintSingleCharToken('%');
+"\\" PrintSingleCharToken('\\');
+"<"  PrintSingleCharToken('<');
+">"  PrintSingleCharToken('>');
+"="  PrintSingleCharToken('=');
+"!"  PrintSingleCharToken('!');
+";"  PrintSingleCharToken(';');
+","  PrintSingleCharToken(',');
+"."  PrintSingleCharToken('.');
+"["  PrintSingleCharToken('[');
+"]"  PrintSingleCharToken(']');
+"("  PrintSingleCharToken('(');
+")"  PrintSingleCharToken(')');
+"{"  PrintSingleCharToken('{');
+"}"  PrintSingleCharToken('}');
 
 [ \t\n] ; /* Skip over white space */
 
