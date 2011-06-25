@@ -136,6 +136,17 @@ ReadLine    PrintTokenType(T_ReadLine);
 "{"  PrintSingleCharToken('{');
 "}"  PrintSingleCharToken('}');
 
+ /* Recognize two-character operators and return the correct token.
+  * See above for operators and punctuation used by the language.
+  */
+"<=" PrintTokenType(T_LessEqual);
+">=" PrintTokenType(T_GreaterEqual);
+"==" PrintTokenType(T_Equal);
+"!=" PrintTokenType(T_NotEqual);
+"&&" PrintTokenType(T_And);
+"||" PrintTokenType(T_Or);
+"[]" PrintTokenType(T_Dims);
+
 [ \t\n] ; /* Skip over white space */
 
 %%
