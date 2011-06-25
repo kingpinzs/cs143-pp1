@@ -61,6 +61,8 @@ static void DoBeforeEachAction();
   * %% markers which delimit the Rules section.
   */
 
+[ \t\n] ; /* Skip over white space */
+
 %%
 /* The closing %% above marks the end of the Rules section and the beginning
  * of the User Subroutines section. All text from here to the end of the
