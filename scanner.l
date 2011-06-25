@@ -33,7 +33,7 @@ YYSTYPE yylval;  // manually declared for pp1, later Yacc provides
  */
 struct yyltype yylloc; // manually dclared for pp1, later Yacc provides
 
-/* Macro: YY_USER_ACTION 
+/* Macro: YY_USER_ACTION
  * ---------------------
  * This flex built-in macro can be defined to provide an action which is
  * always executed prior to any matched rule's action. Basically, it is
@@ -43,7 +43,7 @@ struct yyltype yylloc; // manually dclared for pp1, later Yacc provides
  * be called once for each pattern scanned from the file, before
  * executing its action.
  */
-static void DoBeforeEachAction(); 
+static void DoBeforeEachAction();
 #define YY_USER_ACTION DoBeforeEachAction();
 
 %}
@@ -52,14 +52,14 @@ static void DoBeforeEachAction();
   * input file. Here is where you set options for the scanner, define lex
   * states, and can set up definitions to give names to regular expressions
   * as a simple substitution mechanism that allows for more readable
-  * entries in the Rules section later. 
+  * entries in the Rules section later.
   */
 
 
 %%             /* BEGIN RULES SECTION */
  /* All patterns and actions should be placed between the start and stop
-  * %% markers which delimit the Rules section. 
-  */ 
+  * %% markers which delimit the Rules section.
+  */
 
 %%
 /* The closing %% above marks the end of the Rules section and the beginning
