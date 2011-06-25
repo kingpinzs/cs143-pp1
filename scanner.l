@@ -46,6 +46,16 @@ struct yyltype yylloc; // manually dclared for pp1, later Yacc provides
 static void DoBeforeEachAction();
 #define YY_USER_ACTION DoBeforeEachAction();
 
+/* Function: PrintTokenType
+ * -----------------------------------
+ * This function prints out the specified token type's token name from the
+ * gTokenNames array, along with the lexeme just scanned
+ */
+static void PrintTokenType(TokenType token_type)
+{
+	printf("%-10s %s\n", yytext, gTokenNames[token_type - T_Void]);
+}
+
 %}
 
  /* The section before the first %% is the Definitions section of the lex
@@ -60,6 +70,36 @@ static void DoBeforeEachAction();
  /* All patterns and actions should be placed between the start and stop
   * %% markers which delimit the Rules section.
   */
+
+ /* Recognize all keywords and return the correct token from scanner.h
+  * The following are keywords. They are all reserved, which means they cannot
+  * be used as identifiers or redefined.
+  *         void int double bool string class interface null this extends
+  *         implements for while if else return break new NewArray Print
+  *         ReadInteger Readline
+  */
+void        PrintTokenType(T_Void);
+int         PrintTokenType(T_Int);
+double      PrintTokenType(T_Double);
+bool        PrintTokenType(T_Bool);
+string      PrintTokenType(T_String);
+class       PrintTokenType(T_Class);
+interface   PrintTokenType(T_Interface);
+null        PrintTokenType(T_Null);
+this        PrintTokenType(T_This);
+extends     PrintTokenType(T_Extends);
+implements  PrintTokenType(T_Implements);
+for         PrintTokenType(T_For);
+while       PrintTokenType(T_While);
+if          PrintTokenType(T_If);
+else        PrintTokenType(T_Else);
+return      PrintTokenType(T_Return);
+break       PrintTokenType(T_Break);
+new         PrintTokenType(T_New);
+NewArray    PrintTokenType(T_NewArray);
+Print       PrintTokenType(T_Print);
+ReadInteger PrintTokenType(T_ReadInteger);
+ReadLine    PrintTokenType(T_ReadLine);
 
 [ \t\n] ; /* Skip over white space */
 
