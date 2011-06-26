@@ -87,6 +87,9 @@ static void PrintTokenTypeConstant(TokenType token_type)
 		printf("(value = %s)\n", yylval.boolConstant ? "true" :
 		                                               "false");
 		break;
+	case T_StringConstant:
+		printf("(value = %s)\n", yylval.stringConstant);
+		break;
 	default:
 		/* This case should never occur. If it does, Assert because we
 		 * have a problem.
@@ -218,6 +221,19 @@ ReadLine    PrintTokenType(T_ReadLine);
 true|false {
 	yylval.boolConstant = strcmp(yytext, "true") == 0 ? true : false;
 	PrintTokenTypeConstant(T_BoolConstant);
+}
+
+ /* Recognize string constants
+  * A string constant is a sequence of characters enclosed in couble quotes.
+  * Strings can contain any character except a newline or double quote. A
+  * string must start and end on a single line; it cannot be split over
+  * multiple lines:
+  *         "this string is missing its closing quote
+  *          this is not part of the string above
+  */
+\"[^"]*\" {
+	yylval.stringConstant = strdup(yytext);
+	PrintTokenTypeConstant(T_StringConstant);
 }
 
 [ \t\n] ; /* Skip over white space */
