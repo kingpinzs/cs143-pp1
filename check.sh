@@ -19,9 +19,9 @@ for file in `ls samples/*.out`; do
 	./dcc < $base.$ext 1>$tmp 2>&1
 
 	printf "Checking %-23s: " $file
-	if [ "x$(diff -w $tmp $file)" != "x" ]; then
+	if ! cmp -s $tmp $file; then
 		echo "FAIL <--"
-		diff -w $tmp $file
+		diff $tmp $file
 	else
 		echo "PASS"
 	fi
