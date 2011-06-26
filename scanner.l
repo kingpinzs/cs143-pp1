@@ -72,10 +72,11 @@ int last_col;
 static void DoBeforeEachAction();
 #define YY_USER_ACTION DoBeforeEachAction();
 
-#define LEXEME_FMT "%-10s"
+#define LEXEME_FMT "%-12s"
 #define LINE_FMT   "line %i"
 #define COL_FMT    "cols %i-%i"
-#define TOKEN_FMT  "%s"
+#define TOKEN_FMT  "is %s "
+#define CHAR_FMT   "is '%c' "
 
 /* Function: PrintTokenType
  * -----------------------------------
@@ -96,7 +97,7 @@ static void PrintTokenType(TokenType token_type)
  */
 static void PrintSingleCharToken(int token)
 {
-	printf(LEXEME_FMT " " LINE_FMT " " COL_FMT " %c\n", yytext,
+	printf(LEXEME_FMT " " LINE_FMT " " COL_FMT " " CHAR_FMT "\n", yytext,
 	       yylloc.first_line, yylloc.first_column, yylloc.last_column,
 	       token);
 }
@@ -109,7 +110,7 @@ static void PrintSingleCharToken(int token)
  */
 static void PrintTokenTypeConstant(TokenType token_type)
 {
-	printf(LEXEME_FMT " " LINE_FMT " " COL_FMT " " TOKEN_FMT " ", yytext,
+	printf(LEXEME_FMT " " LINE_FMT " " COL_FMT " " TOKEN_FMT, yytext,
 	       yylloc.first_line, yylloc.first_column, yylloc.last_column,
 	       gTokenNames[token_type - T_Void]);
 
