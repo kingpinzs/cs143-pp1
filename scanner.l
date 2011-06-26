@@ -66,6 +66,29 @@ static void PrintSingleCharToken(int token)
 	printf("%-10s %c\n", yytext, token);
 }
 
+/* Function: PrintTokenTypeConstant
+ * --------------------------------
+ * This function prints out the specified token type's token name from the
+ * gTokenNames array, the lexeme just scanned, and the appropriate field of
+ * yylval
+ */
+static void PrintTokenTypeConstant(TokenType token_type)
+{
+	printf("%-10s %s ", yytext, gTokenNames[token_type - T_Void]);
+
+	switch (token_type) {
+	case T_IntConstant:
+		printf("(value = %i)\n", yylval.integerConstant);
+		break;
+	default:
+		/* This case should never occur. If it does, Assert because we
+		 * have a problem.
+		 */
+		Assert(0);
+		break;
+	}
+}
+
 %}
 
  /* The section before the first %% is the Definitions section of the lex
@@ -75,6 +98,8 @@ static void PrintSingleCharToken(int token)
   * entries in the Rules section later.
   */
 
+DEC_DIGIT [0-9]
+HEX_DIGIT [0-9a-fA-F]
 
 %%             /* BEGIN RULES SECTION */
  /* All patterns and actions should be placed between the start and stop
@@ -146,6 +171,23 @@ ReadLine    PrintTokenType(T_ReadLine);
 "&&" PrintTokenType(T_And);
 "||" PrintTokenType(T_Or);
 "[]" PrintTokenType(T_Dims);
+
+ /* Recognize int, double, bool, and string constants, return the correct
+  * token and set appropriate field of yylval
+  */
+ /* Recognize int constants
+  * An integer constant can either be specified in decimal (base 10) or
+  * hexadecimal (base 16). A decimal integer is a sequence of decimal digits. A
+  * hexadecimal integer must begin with 0X or 0x (that is a zero, not the
+  * letter oh) and is followed by a sequence of hexadecimal digits. Hexadecimal
+  * digits include the decimal digits and the letters a through f (either upper
+  * or lowercase). For example, the following are valid integers: 8, 012, 0x0,
+  * 0X12aE.
+  */
+0[xX]{HEX_DIGIT}+|{DEC_DIGIT}+ {
+	yylval.integerConstant = strtol(yytext, NULL, 0);
+	PrintTokenTypeConstant(T_IntConstant);
+}
 
 [ \t\n] ; /* Skip over white space */
 
