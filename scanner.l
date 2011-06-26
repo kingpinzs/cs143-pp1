@@ -110,6 +110,7 @@ static void PrintTokenTypeConstant(TokenType token_type)
 
 DEC_DIGIT [0-9]
 HEX_DIGIT [0-9a-fA-F]
+LETTER [a-zA-Z]
 
 %%             /* BEGIN RULES SECTION */
  /* All patterns and actions should be placed between the start and stop
@@ -234,6 +235,25 @@ true|false {
 \"[^"]*\" {
 	yylval.stringConstant = strdup(yytext);
 	PrintTokenTypeConstant(T_StringConstant);
+}
+
+ /* Recognize identifiers, return the correct token and set appropriate fields
+  * of yylval.
+  * An identifier is a sequence of letters, digits, and underscores, starting
+  * with a letter. Decaf is case-sensitive, e.g., if is a keyword, but IF is an
+  * identifier; binky and Binky are two distinct identifiers. Identifiers can
+  * be at most 31 characters long.
+  */
+{LETTER}({LETTER}*|{DEC_DIGIT}*|_*)* {
+	strncpy(yylval.identifier, yytext, MaxIdentLen);
+	/* Taken from man strncpy:
+	 * "Warning: if there is no null byte amont the first n bytes of src,
+	 *  the string placed in dest will not be null-terminated."
+	 * Thus, we need to explicitly null terminate yylval.identifier just in
+	 * case yytext is a string with length greater than MaxIdentLen.
+	 */
+	yylval.identifier[MaxIdentLen] = '\0';
+	PrintTokenType(T_Identifier);
 }
 
 [ \t\n] ; /* Skip over white space */
