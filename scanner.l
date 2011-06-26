@@ -119,7 +119,7 @@ static void PrintTokenTypeConstant(TokenType token_type)
 		printf("(value = %i)\n", yylval.integerConstant);
 		break;
 	case T_DoubleConstant:
-		printf("(value = %f)\n", yylval.doubleConstant);
+		printf("(value = %g)\n", yylval.doubleConstant);
 		break;
 	case T_BoolConstant:
 		printf("(value = %s)\n", yylval.boolConstant ? "true" :
