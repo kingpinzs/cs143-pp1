@@ -39,7 +39,7 @@ struct yyltype yylloc; // manually dclared for pp1, later Yacc provides
  * scanned. This should be initialized in the InitScanner function and
  * incremented with each new line scanned.
  */
-unsigned long line_num;
+int line_num;
 
 /* Global variable: first_col
  * --------------------------
@@ -48,7 +48,7 @@ unsigned long line_num;
  * the start of every new line, along with being appropriately incremented
  * with every token.
  */
-unsigned long first_col;
+int first_col;
 
 /* Global variable: last_col
  * ------------------------
@@ -57,7 +57,7 @@ unsigned long first_col;
  * start of every new line, along with being appropriately incremented with
  * every token.
  */
-unsigned long last_col;
+int last_col;
 
 /* Macro: YY_USER_ACTION
  * ---------------------
@@ -73,8 +73,8 @@ static void DoBeforeEachAction();
 #define YY_USER_ACTION DoBeforeEachAction();
 
 #define LEXEME_FMT "%-10s"
-#define LINE_FMT   "line %lu"
-#define COL_FMT    "cols %lu-%lu"
+#define LINE_FMT   "line %i"
+#define COL_FMT    "cols %i-%i"
 #define TOKEN_FMT  "%s"
 
 /* Function: PrintTokenType
@@ -85,7 +85,7 @@ static void DoBeforeEachAction();
 static void PrintTokenType(TokenType token_type)
 {
 	printf(LEXEME_FMT " " LINE_FMT " " COL_FMT " " TOKEN_FMT "\n", yytext,
-	       line_num, first_col, last_col,
+	       yylloc.first_line, yylloc.first_column, yylloc.last_column,
 	       gTokenNames[token_type - T_Void]);
 }
 
@@ -96,8 +96,9 @@ static void PrintTokenType(TokenType token_type)
  */
 static void PrintSingleCharToken(int token)
 {
-	printf(LEXEME_FMT " " LINE_FMT " " COL_FMT " %c\n", yytext, line_num,
-	       first_col, last_col, token);
+	printf(LEXEME_FMT " " LINE_FMT " " COL_FMT " %c\n", yytext,
+	       yylloc.first_line, yylloc.first_column, yylloc.last_column,
+	       token);
 }
 
 /* Function: PrintTokenTypeConstant
@@ -109,7 +110,7 @@ static void PrintSingleCharToken(int token)
 static void PrintTokenTypeConstant(TokenType token_type)
 {
 	printf(LEXEME_FMT " " LINE_FMT " " COL_FMT " " TOKEN_FMT " ", yytext,
-	       line_num, first_col, last_col,
+	       yylloc.first_line, yylloc.first_column, yylloc.last_column,
 	       gTokenNames[token_type - T_Void]);
 
 	switch (token_type) {
@@ -350,5 +351,9 @@ void InitScanner()
 static void DoBeforeEachAction()
 {
 	first_col = last_col;
-	last_col += strlen(yytext) - 1;
+	last_col += strlen(yytext);
+
+	yylloc.first_line = yylloc.last_line = line_num;
+	yylloc.first_column = first_col;
+	yylloc.last_column = last_col - 1;
 }
