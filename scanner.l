@@ -46,6 +46,9 @@ struct yyltype yylloc; // manually dclared for pp1, later Yacc provides
 static void DoBeforeEachAction();
 #define YY_USER_ACTION DoBeforeEachAction();
 
+#define LEXEME_FMT "%-10s"
+#define TOKEN_FMT  "%s"
+
 /* Function: PrintTokenType
  * -----------------------------------
  * This function prints out the specified token type's token name from the
@@ -53,7 +56,8 @@ static void DoBeforeEachAction();
  */
 static void PrintTokenType(TokenType token_type)
 {
-	printf("%-10s %s\n", yytext, gTokenNames[token_type - T_Void]);
+	printf(LEXEME_FMT " " TOKEN_FMT "\n", yytext,
+	       gTokenNames[token_type - T_Void]);
 }
 
 /* Function: PrintSingleCharToken
@@ -63,7 +67,7 @@ static void PrintTokenType(TokenType token_type)
  */
 static void PrintSingleCharToken(int token)
 {
-	printf("%-10s %c\n", yytext, token);
+	printf(LEXEME_FMT " %c\n", yytext, token);
 }
 
 /* Function: PrintTokenTypeConstant
@@ -74,7 +78,8 @@ static void PrintSingleCharToken(int token)
  */
 static void PrintTokenTypeConstant(TokenType token_type)
 {
-	printf("%-10s %s ", yytext, gTokenNames[token_type - T_Void]);
+	printf(LEXEME_FMT " " TOKEN_FMT " ", yytext,
+	       gTokenNames[token_type - T_Void]);
 
 	switch (token_type) {
 	case T_IntConstant:
