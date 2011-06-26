@@ -173,6 +173,8 @@ DEC_DIGIT [0-9]
 HEX_DIGIT [0-9a-fA-F]
 LETTER [a-zA-Z]
 
+%x C_COMMENT
+
 %%             /* BEGIN RULES SECTION */
  /* All patterns and actions should be placed between the start and stop
   * %% markers which delimit the Rules section.
@@ -181,7 +183,7 @@ LETTER [a-zA-Z]
  /* Skip over comments */
  /* A single-line comment is started by // and extends to the end of the line.
   */
-\/\/[^\n]* ;
+"//"[^\n]* ;
 
  /* C-style comments start with '/ *' (without the space character of course)
   * and end with the first subsequent '* /' (again, without the space
@@ -189,7 +191,12 @@ LETTER [a-zA-Z]
   * (again, ignore the space character) which ends the current comment.
   * C-style comments do not nest.
   */
-\/\*(.|\n)*\*\/ ;
+"/*" {
+	BEGIN(C_COMMENT);
+}
+<C_COMMENT>"*/" {
+	BEGIN(INITIAL);
+}
 
  /* Recognize all keywords and return the correct token from scanner.h
   * The following are keywords. They are all reserved, which means they cannot
@@ -343,7 +350,7 @@ true|false {
 }
 
  /* Skip over white space */
-[ \t\n] {
+<C_COMMENT,INITIAL>[ \t\n] {
 	/* If we have encountered a newline character then increment the line
 	 * number counter (hopefully this doesn't cause overflow issues). Also,
 	 * reset the starting and ending column counters to their initial
@@ -355,6 +362,11 @@ true|false {
 		last_col = 1;
 	}
 }
+
+ /* C-style comments can contain _any_ character except the terminal sequence.
+  * Thus, skip over these characters that are within C-style comments.
+  */
+<C_COMMENT>. ;
 
  /* Report lexical errors for invalid characters */
 . {
