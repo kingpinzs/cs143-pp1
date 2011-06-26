@@ -83,6 +83,10 @@ static void PrintTokenTypeConstant(TokenType token_type)
 	case T_DoubleConstant:
 		printf("(value = %f)\n", yylval.doubleConstant);
 		break;
+	case T_BoolConstant:
+		printf("(value = %s)\n", yylval.boolConstant ? "true" :
+		                                               "false");
+		break;
 	default:
 		/* This case should never occur. If it does, Assert because we
 		 * have a problem.
@@ -205,6 +209,15 @@ ReadLine    PrintTokenType(T_ReadLine);
 {DEC_DIGIT}+\.{DEC_DIGIT}*([eE][-+]?{DEC_DIGIT}+)? {
 	yylval.doubleConstant = strtod(yytext, NULL);
 	PrintTokenTypeConstant(T_DoubleConstant);
+}
+
+ /* Recognize bool constants
+  * A Boolean constant is either true or false. Like keywords, these words are
+  * reserved.
+  */
+true|false {
+	yylval.boolConstant = strcmp(yytext, "true") == 0 ? true : false;
+	PrintTokenTypeConstant(T_BoolConstant);
 }
 
 [ \t\n] ; /* Skip over white space */
