@@ -41,6 +41,24 @@ struct yyltype yylloc; // manually dclared for pp1, later Yacc provides
  */
 unsigned long line_num;
 
+/* Global variable: first_col
+ * --------------------------
+ * This global variable is how we keep track of what column the current lexeme
+ * starts at. This should be initialized in the InitScanner function and at
+ * the start of every new line, along with being appropriately incremented
+ * with every token.
+ */
+unsigned long first_col;
+
+/* Global variable: last_col
+ * ------------------------
+ * This global variable is how we keep track of what column the current lexeme
+ * ends at. This should be initialized in the InitScanner function and at the
+ * start of every new line, along with being appropriately incremented with
+ * every token.
+ */
+unsigned long last_col;
+
 /* Macro: YY_USER_ACTION
  * ---------------------
  * This flex built-in macro can be defined to provide an action which is
@@ -56,6 +74,7 @@ static void DoBeforeEachAction();
 
 #define LEXEME_FMT "%-10s"
 #define LINE_FMT   "line %lu"
+#define COL_FMT    "cols %lu-%lu"
 #define TOKEN_FMT  "%s"
 
 /* Function: PrintTokenType
@@ -65,7 +84,8 @@ static void DoBeforeEachAction();
  */
 static void PrintTokenType(TokenType token_type)
 {
-	printf(LEXEME_FMT " " LINE_FMT " " TOKEN_FMT "\n", yytext, line_num,
+	printf(LEXEME_FMT " " LINE_FMT " " COL_FMT " " TOKEN_FMT "\n", yytext,
+	       line_num, first_col, last_col,
 	       gTokenNames[token_type - T_Void]);
 }
 
@@ -76,7 +96,8 @@ static void PrintTokenType(TokenType token_type)
  */
 static void PrintSingleCharToken(int token)
 {
-	printf(LEXEME_FMT " " LINE_FMT " %c\n", yytext, line_num, token);
+	printf(LEXEME_FMT " " LINE_FMT " " COL_FMT " %c\n", yytext, line_num,
+	       first_col, last_col, token);
 }
 
 /* Function: PrintTokenTypeConstant
@@ -87,7 +108,8 @@ static void PrintSingleCharToken(int token)
  */
 static void PrintTokenTypeConstant(TokenType token_type)
 {
-	printf(LEXEME_FMT " " LINE_FMT " " TOKEN_FMT " ", yytext, line_num,
+	printf(LEXEME_FMT " " LINE_FMT " " COL_FMT " " TOKEN_FMT " ", yytext,
+	       line_num, first_col, last_col,
 	       gTokenNames[token_type - T_Void]);
 
 	switch (token_type) {
@@ -273,10 +295,15 @@ true|false {
  /* Skip over white space */
 [ \t\n] {
 	/* If we have encountered a newline character then increment the line
-	 * number counter (hopefully this doesn't cause overflow issues).
+	 * number counter (hopefully this doesn't cause overflow issues). Also,
+	 * reset the starting and ending column counters to their initial
+	 * values.
 	 */
-	if (strcmp(yytext, "\n") == 0)
+	if (strcmp(yytext, "\n") == 0) {
 		++line_num;
+		first_col = 1;
+		last_col = 1;
+	}
 }
 
 %%
@@ -307,6 +334,11 @@ void InitScanner()
      * input is labeled as line 1.
      */
     line_num = 1;
+    /* Initialize the global starting and ending column counters. The first
+     * column in each source line is labeled as column 1
+     */
+    first_col = 1;
+    last_col = 1;
 }
 
 
@@ -317,4 +349,6 @@ void InitScanner()
  */
 static void DoBeforeEachAction()
 {
+	first_col = last_col;
+	last_col += strlen(yytext) - 1;
 }
