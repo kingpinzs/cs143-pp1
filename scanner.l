@@ -292,9 +292,21 @@ true|false {
   *         "this string is missing its closing quote
   *          this is not part of the string above
   */
-\"[^"\n]*\" {
+\"[^"\n]*\"? {
 	yylval.stringConstant = strdup(yytext);
-	PrintTokenTypeConstant(T_StringConstant);
+
+	size_t len = strlen(yytext);
+	/* If the length of the lexeme is equal to 1, then it is impossible for
+	 * it to have matching double quotes. At lease two characters are
+	 * needed for this (a length of 2 or more). Also, if the last character
+	 * in the string is not a double quote, then the string does not
+	 * contain it's terminating double quote. Report these errors if they
+	 * are present, otherwise print the token string constant.
+	 */
+	if (len == 1 || yytext[len - 1] != '"')
+		ReportError::UntermString(&yylloc, yytext);
+	else
+		PrintTokenTypeConstant(T_StringConstant);
 }
 
  /* Recognize identifiers, return the correct token and set appropriate fields
