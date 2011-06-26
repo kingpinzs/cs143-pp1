@@ -80,6 +80,9 @@ static void PrintTokenTypeConstant(TokenType token_type)
 	case T_IntConstant:
 		printf("(value = %i)\n", yylval.integerConstant);
 		break;
+	case T_DoubleConstant:
+		printf("(value = %f)\n", yylval.doubleConstant);
+		break;
 	default:
 		/* This case should never occur. If it does, Assert because we
 		 * have a problem.
@@ -187,6 +190,21 @@ ReadLine    PrintTokenType(T_ReadLine);
 0[xX]{HEX_DIGIT}+|{DEC_DIGIT}+ {
 	yylval.integerConstant = strtol(yytext, NULL, 0);
 	PrintTokenTypeConstant(T_IntConstant);
+}
+
+ /* Recognize double constants
+  * A double constant is a sequence of decimal digits, a period, followed by
+  * any sequence of digist (maybe none). Thus .12 is not valid, but both 0.12
+  * and 12. are. A double can also have an optional exponent, e.g., 12.2E+2.
+  * For a double in this sort of scientific notation, the decimal point is
+  * required, the sign of the exponent is optional (if not specified, a + is
+  * assumed), and the E can be either lower or upper case. As above, .12E+2 is
+  * invalid, but 12.E+2 is valid. Leading zeros on the mantissa and exponent
+  * are allowed.
+  */
+{DEC_DIGIT}+\.{DEC_DIGIT}*([eE][-+]?{DEC_DIGIT}+)? {
+	yylval.doubleConstant = strtod(yytext, NULL);
+	PrintTokenTypeConstant(T_DoubleConstant);
 }
 
 [ \t\n] ; /* Skip over white space */
