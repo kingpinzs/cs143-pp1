@@ -155,7 +155,7 @@ static void PrintIdentifier()
 	       gTokenNames[T_Identifier - T_Void]);
 
 	if (too_long)
-		printf(" (truncated to %s)", yylval.identifier);
+		printf("(truncated to %s)", yylval.identifier);
 
 	printf("\n");
 }
