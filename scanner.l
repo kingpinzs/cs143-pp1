@@ -136,6 +136,29 @@ static void PrintTokenTypeConstant(TokenType token_type)
 	}
 }
 
+/* Function: PrintIdentifier
+ * -------------------------
+ * This function prints out the T_Identifier token type name, and the lexeme
+ * just scanned. If the current identifier's length is greater than the maximum
+ * allowed, and error is printed.
+ */
+static void PrintIdentifier()
+{
+	bool too_long = strlen(yytext) > MaxIdentLen ? true : false;
+
+	if (too_long)
+		ReportError::LongIdentifier(&yylloc, yytext);
+
+	printf(LEXEME_FMT " " LINE_FMT " " COL_FMT " " TOKEN_FMT, yytext,
+	       yylloc.first_line, yylloc.first_column, yylloc.last_column,
+	       gTokenNames[T_Identifier - T_Void]);
+
+	if (too_long)
+		printf(" (truncated to %s)", yylval.identifier);
+
+	printf("\n");
+}
+
 %}
 
  /* The section before the first %% is the Definitions section of the lex
@@ -290,7 +313,7 @@ true|false {
 	 * case yytext is a string with length greater than MaxIdentLen.
 	 */
 	yylval.identifier[MaxIdentLen] = '\0';
-	PrintTokenType(T_Identifier);
+	PrintIdentifier();
 }
 
  /* Skip over white space */
