@@ -177,6 +177,19 @@ LETTER [a-zA-Z]
   * %% markers which delimit the Rules section.
   */
 
+ /* Skip over comments */
+ /* A single-line comment is started by // and extends to the end of the line.
+  */
+\/\/[^\n]* ;
+
+ /* C-style comments start with '/ *' (without the space character of course)
+  * and end with the first subsequent '* /' (again, without the space
+  * character). Any symbol is allowed in a comment except the sequence '* /'
+  * (again, ignore the space character) which ends the current comment.
+  * C-style comments do not nest.
+  */
+\/\*(.|\n)*\*\/ ;
+
  /* Recognize all keywords and return the correct token from scanner.h
   * The following are keywords. They are all reserved, which means they cannot
   * be used as identifiers or redefined.
