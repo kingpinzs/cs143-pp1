@@ -307,6 +307,11 @@ true|false {
 	}
 }
 
+ /* Report lexical errors for invalid characters */
+. {
+	ReportError::UnrecogChar(&yylloc, yytext[0]);
+}
+
 %%
 /* The closing %% above marks the end of the Rules section and the beginning
  * of the User Subroutines section. All text from here to the end of the
