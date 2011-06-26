@@ -33,6 +33,14 @@ YYSTYPE yylval;  // manually declared for pp1, later Yacc provides
  */
 struct yyltype yylloc; // manually dclared for pp1, later Yacc provides
 
+/* Global variable: line_num
+ * -------------------------
+ * This global variable is how we keep track of the current line number being
+ * scanned. This should be initialized in the InitScanner function and
+ * incremented with each new line scanned.
+ */
+unsigned long line_num;
+
 /* Macro: YY_USER_ACTION
  * ---------------------
  * This flex built-in macro can be defined to provide an action which is
@@ -47,6 +55,7 @@ static void DoBeforeEachAction();
 #define YY_USER_ACTION DoBeforeEachAction();
 
 #define LEXEME_FMT "%-10s"
+#define LINE_FMT   "line %lu"
 #define TOKEN_FMT  "%s"
 
 /* Function: PrintTokenType
@@ -56,7 +65,7 @@ static void DoBeforeEachAction();
  */
 static void PrintTokenType(TokenType token_type)
 {
-	printf(LEXEME_FMT " " TOKEN_FMT "\n", yytext,
+	printf(LEXEME_FMT " " LINE_FMT " " TOKEN_FMT "\n", yytext, line_num,
 	       gTokenNames[token_type - T_Void]);
 }
 
@@ -67,7 +76,7 @@ static void PrintTokenType(TokenType token_type)
  */
 static void PrintSingleCharToken(int token)
 {
-	printf(LEXEME_FMT " %c\n", yytext, token);
+	printf(LEXEME_FMT " " LINE_FMT " %c\n", yytext, line_num, token);
 }
 
 /* Function: PrintTokenTypeConstant
@@ -78,7 +87,7 @@ static void PrintSingleCharToken(int token)
  */
 static void PrintTokenTypeConstant(TokenType token_type)
 {
-	printf(LEXEME_FMT " " TOKEN_FMT " ", yytext,
+	printf(LEXEME_FMT " " LINE_FMT " " TOKEN_FMT " ", yytext, line_num,
 	       gTokenNames[token_type - T_Void]);
 
 	switch (token_type) {
@@ -261,7 +270,14 @@ true|false {
 	PrintTokenType(T_Identifier);
 }
 
-[ \t\n] ; /* Skip over white space */
+ /* Skip over white space */
+[ \t\n] {
+	/* If we have encountered a newline character then increment the line
+	 * number counter (hopefully this doesn't cause overflow issues).
+	 */
+	if (strcmp(yytext, "\n") == 0)
+		++line_num;
+}
 
 %%
 /* The closing %% above marks the end of the Rules section and the beginning
@@ -287,6 +303,10 @@ void InitScanner()
 {
     PrintDebug("lex", "Initializing scanner");
     yy_flex_debug = false;
+    /* Initialize the global line number counter. The first line in the source
+     * input is labeled as line 1.
+     */
+    line_num = 1;
 }
 
 
