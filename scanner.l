@@ -292,7 +292,7 @@ true|false {
   *         "this string is missing its closing quote
   *          this is not part of the string above
   */
-\"[^"]*\" {
+\"[^"\n]*\" {
 	yylval.stringConstant = strdup(yytext);
 	PrintTokenTypeConstant(T_StringConstant);
 }
