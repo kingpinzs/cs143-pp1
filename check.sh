@@ -18,7 +18,7 @@ for file in `ls samples/*.out`; do
 	tmp=${TMP:-"/tmp"}/check.tmp
 	./dcc < $base.$ext 1>$tmp 2>&1
 
-	printf "Checking %-23s: " $file
+	printf "Checking %-27s: " $file
 	if ! cmp -s $tmp $file; then
 		echo "FAIL <--"
 		diff $tmp $file
