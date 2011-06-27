@@ -1,0 +1,13 @@
+************************************
+* CS 143 - Compilers - Summer 2011 *
+************************************
+
+Programming Project 1: Lexical Analysis
+---------------------------------------
+
+In the first programming project, you will get your compiler off to a great
+start by implementing the lexical analyzer. For the first task of the
+front-end, you will use flex to create a scanner for the Decaf programming
+language. Your scanner will transform the source file from a stream of bits and
+bytes into a series of meaningful tokens containing information that will be
+used by the later stages of the compiler.
