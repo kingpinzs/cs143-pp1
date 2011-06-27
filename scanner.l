@@ -363,6 +363,11 @@ true|false {
 	}
 }
 
+<C_COMMENT><<EOF>> {
+	ReportError::UntermComment();
+	yyterminate();
+}
+
  /* C-style comments can contain _any_ character except the terminal sequence.
   * Thus, skip over these characters that are within C-style comments.
   */
