@@ -5,9 +5,57 @@
 Programming Project 1: Lexical Analysis
 ---------------------------------------
 
+Goal:
+
 In the first programming project, you will get your compiler off to a great
 start by implementing the lexical analyzer. For the first task of the
 front-end, you will use flex to create a scanner for the Decaf programming
 language. Your scanner will transform the source file from a stream of bits and
 bytes into a series of meaningful tokens containing information that will be
 used by the later stages of the compiler.
+
+Building:
+
+To build the scanner, the following are known dependences: make, flex, and gcc.
+Once those dependencies are properly installed, simply type 'make' from within
+the top level directory. This should output the 'dcc' executable, this is the
+scanner.
+
+Usage:
+
+The scanner reads input from stdin, and outputs to stdout and stderr. Thus, it
+can be run interactively simply by executing the scanner:
+
+        $ ./dcc
+
+In this mode, dcc will read in the text typed into the terminal and tokenize it
+as each newline is typed on the fly. To exit while in this mode, input the EOF
+character (Ctrl+D on most systems). Alternatively, a file can be redirected
+into the program using standard shell redirection syntax:
+
+        $ ./dcc < main.decaf
+
+In this mode, dcc will read in the file and tokenize it line by line. In both
+of these modes, dcc will send normal output to stdout and error messages to
+stderr.
+
+Regression Testing:
+
+As active development continues, it is important to ensure the scanner
+maintains it's proper behavior. Thus, the check.sh script, in conjunction with
+test cases within the samples directory can be used. To run the regression
+suite, simply execute the shell script:
+
+        $ ./check.sh
+
+This will try to execute the full regression suite contained in the samples
+directory, and output whether dcc passed or failed a specific test. On failure,
+a diff of the actual output with the expected output will also be displayed.
+
+When adding new regression test cases, make sure two files are created for each
+test case and are added to the samples directory. The input file fed to dcc
+should have a file extension of either 'decaf' or 'frag', and the expected
+output file should have a file extension of 'out'. Also, the input file and
+expected output file for each test need to have a common base filename. Please
+see the existing test cases contained in the samples directory if more
+clarification is needed.
