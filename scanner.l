@@ -231,14 +231,13 @@ ReadLine    PrintTokenType(T_ReadLine);
  /* Recognize punctuation and single-char operators and return the ASCII value
   * as the token.
   * Operator and punctuation characters used by the language includes:
-  *        + - * / % \ < <= > >= = == != && || ! ; , . [] [ ] ( ) { }
+  *        + - * / % < <= > >= = == != && || ! ; , . [] [ ] ( ) { }
   */
 "+"  PrintSingleCharToken('+');
 "-"  PrintSingleCharToken('-');
 "*"  PrintSingleCharToken('*');
 "/"  PrintSingleCharToken('/');
 "%"  PrintSingleCharToken('%');
-"\\" PrintSingleCharToken('\\');
 "<"  PrintSingleCharToken('<');
 ">"  PrintSingleCharToken('>');
 "="  PrintSingleCharToken('=');
