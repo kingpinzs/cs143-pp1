@@ -72,94 +72,6 @@ int last_col;
 static void DoBeforeEachAction();
 #define YY_USER_ACTION DoBeforeEachAction();
 
-#define LEXEME_FMT "%-12s"
-#define LINE_FMT   "line %i"
-#define COL_FMT    "cols %i-%i"
-#define TOKEN_FMT  "is %s "
-#define CHAR_FMT   "is '%c' "
-
-/* Function: PrintTokenType
- * -----------------------------------
- * This function prints out the specified token type's token name from the
- * gTokenNames array, along with the lexeme just scanned
- */
-static void PrintTokenType(TokenType token_type)
-{
-	printf(LEXEME_FMT " " LINE_FMT " " COL_FMT " " TOKEN_FMT "\n", yytext,
-	       yylloc.first_line, yylloc.first_column, yylloc.last_column,
-	       gTokenNames[token_type - T_Void]);
-}
-
-/* Function: PrintSingleCharToken
- * ------------------------------
- * This function prints out the specified single character token, along with
- * the lexeme just scanned
- */
-static void PrintSingleCharToken(int token)
-{
-	printf(LEXEME_FMT " " LINE_FMT " " COL_FMT " " CHAR_FMT "\n", yytext,
-	       yylloc.first_line, yylloc.first_column, yylloc.last_column,
-	       token);
-}
-
-/* Function: PrintTokenTypeConstant
- * --------------------------------
- * This function prints out the specified token type's token name from the
- * gTokenNames array, the lexeme just scanned, and the appropriate field of
- * yylval
- */
-static void PrintTokenTypeConstant(TokenType token_type)
-{
-	printf(LEXEME_FMT " " LINE_FMT " " COL_FMT " " TOKEN_FMT, yytext,
-	       yylloc.first_line, yylloc.first_column, yylloc.last_column,
-	       gTokenNames[token_type - T_Void]);
-
-	switch (token_type) {
-	case T_IntConstant:
-		printf("(value = %i)\n", yylval.integerConstant);
-		break;
-	case T_DoubleConstant:
-		printf("(value = %g)\n", yylval.doubleConstant);
-		break;
-	case T_BoolConstant:
-		printf("(value = %s)\n", yylval.boolConstant ? "true" :
-		                                               "false");
-		break;
-	case T_StringConstant:
-		printf("(value = %s)\n", yylval.stringConstant);
-		break;
-	default:
-		/* This case should never occur. If it does, Assert because we
-		 * have a problem.
-		 */
-		Assert(0);
-		break;
-	}
-}
-
-/* Function: PrintIdentifier
- * -------------------------
- * This function prints out the T_Identifier token type name, and the lexeme
- * just scanned. If the current identifier's length is greater than the maximum
- * allowed, and error is printed.
- */
-static void PrintIdentifier()
-{
-	bool too_long = strlen(yytext) > MaxIdentLen ? true : false;
-
-	if (too_long)
-		ReportError::LongIdentifier(&yylloc, yytext);
-
-	printf(LEXEME_FMT " " LINE_FMT " " COL_FMT " " TOKEN_FMT, yytext,
-	       yylloc.first_line, yylloc.first_column, yylloc.last_column,
-	       gTokenNames[T_Identifier - T_Void]);
-
-	if (too_long)
-		printf("(truncated to %s)", yylval.identifier);
-
-	printf("\n");
-}
-
 %}
 
  /* The section before the first %% is the Definitions section of the lex
@@ -205,63 +117,63 @@ LETTER [a-zA-Z]
   *         implements for while if else return break new NewArray Print
   *         ReadInteger Readline
   */
-void        PrintTokenType(T_Void);
-int         PrintTokenType(T_Int);
-double      PrintTokenType(T_Double);
-bool        PrintTokenType(T_Bool);
-string      PrintTokenType(T_String);
-class       PrintTokenType(T_Class);
-interface   PrintTokenType(T_Interface);
-null        PrintTokenType(T_Null);
-this        PrintTokenType(T_This);
-extends     PrintTokenType(T_Extends);
-implements  PrintTokenType(T_Implements);
-for         PrintTokenType(T_For);
-while       PrintTokenType(T_While);
-if          PrintTokenType(T_If);
-else        PrintTokenType(T_Else);
-return      PrintTokenType(T_Return);
-break       PrintTokenType(T_Break);
-new         PrintTokenType(T_New);
-NewArray    PrintTokenType(T_NewArray);
-Print       PrintTokenType(T_Print);
-ReadInteger PrintTokenType(T_ReadInteger);
-ReadLine    PrintTokenType(T_ReadLine);
+void        return T_Void;
+int         return T_Int;
+double      return T_Double;
+bool        return T_Bool;
+string      return T_String;
+class       return T_Class;
+interface   return T_Interface;
+null        return T_Null;
+this        return T_This;
+extends     return T_Extends;
+implements  return T_Implements;
+for         return T_For;
+while       return T_While;
+if          return T_If;
+else        return T_Else;
+return      return T_Return;
+break       return T_Break;
+new         return T_New;
+NewArray    return T_NewArray;
+Print       return T_Print;
+ReadInteger return T_ReadInteger;
+ReadLine    return T_ReadLine;
 
  /* Recognize punctuation and single-char operators and return the ASCII value
   * as the token.
   * Operator and punctuation characters used by the language includes:
   *        + - * / % < <= > >= = == != && || ! ; , . [] [ ] ( ) { }
   */
-"+"  PrintSingleCharToken('+');
-"-"  PrintSingleCharToken('-');
-"*"  PrintSingleCharToken('*');
-"/"  PrintSingleCharToken('/');
-"%"  PrintSingleCharToken('%');
-"<"  PrintSingleCharToken('<');
-">"  PrintSingleCharToken('>');
-"="  PrintSingleCharToken('=');
-"!"  PrintSingleCharToken('!');
-";"  PrintSingleCharToken(';');
-","  PrintSingleCharToken(',');
-"."  PrintSingleCharToken('.');
-"["  PrintSingleCharToken('[');
-"]"  PrintSingleCharToken(']');
-"("  PrintSingleCharToken('(');
-")"  PrintSingleCharToken(')');
-"{"  PrintSingleCharToken('{');
-"}"  PrintSingleCharToken('}');
+"+"  return '+';
+"-"  return '-';
+"*"  return '*';
+"/"  return '/';
+"%"  return '%';
+"<"  return '<';
+">"  return '>';
+"="  return '=';
+"!"  return '!';
+";"  return ';';
+","  return ',';
+"."  return '.';
+"["  return '[';
+"]"  return ']';
+"("  return '(';
+")"  return ')';
+"{"  return '{';
+"}"  return '}';
 
  /* Recognize two-character operators and return the correct token.
   * See above for operators and punctuation used by the language.
   */
-"<=" PrintTokenType(T_LessEqual);
-">=" PrintTokenType(T_GreaterEqual);
-"==" PrintTokenType(T_Equal);
-"!=" PrintTokenType(T_NotEqual);
-"&&" PrintTokenType(T_And);
-"||" PrintTokenType(T_Or);
-"[]" PrintTokenType(T_Dims);
+"<=" return T_LessEqual;
+">=" return T_GreaterEqual;
+"==" return T_Equal;
+"!=" return T_NotEqual;
+"&&" return T_And;
+"||" return T_Or;
+"[]" return T_Dims;
 
  /* Recognize int, double, bool, and string constants, return the correct
   * token and set appropriate field of yylval
@@ -277,7 +189,7 @@ ReadLine    PrintTokenType(T_ReadLine);
   */
 0[xX]{HEX_DIGIT}+|{DEC_DIGIT}+ {
 	yylval.integerConstant = strtol(yytext, NULL, 0);
-	PrintTokenTypeConstant(T_IntConstant);
+	return T_IntConstant;
 }
 
  /* Recognize double constants
@@ -292,7 +204,7 @@ ReadLine    PrintTokenType(T_ReadLine);
   */
 {DEC_DIGIT}+\.{DEC_DIGIT}*([eE][-+]?{DEC_DIGIT}+)? {
 	yylval.doubleConstant = strtod(yytext, NULL);
-	PrintTokenTypeConstant(T_DoubleConstant);
+	return T_DoubleConstant;
 }
 
  /* Recognize bool constants
@@ -301,7 +213,7 @@ ReadLine    PrintTokenType(T_ReadLine);
   */
 true|false {
 	yylval.boolConstant = strcmp(yytext, "true") == 0 ? true : false;
-	PrintTokenTypeConstant(T_BoolConstant);
+	return T_BoolConstant;
 }
 
  /* Recognize string constants
@@ -326,7 +238,7 @@ true|false {
 	if (len == 1 || yytext[len - 1] != '"')
 		ReportError::UntermString(&yylloc, yytext);
 	else
-		PrintTokenTypeConstant(T_StringConstant);
+		return T_StringConstant;
 }
 
  /* Recognize identifiers, return the correct token and set appropriate fields
@@ -345,7 +257,9 @@ true|false {
 	 * case yytext is a string with length greater than MaxIdentLen.
 	 */
 	yylval.identifier[MaxIdentLen] = '\0';
-	PrintIdentifier();
+	if (strlen(yytext) > MaxIdentLen)
+		ReportError::LongIdentifier(&yylloc, yytext);
+	return T_Identifier;
 }
 
  /* Skip over white space */
