@@ -18,6 +18,17 @@ language. Your scanner will transform the source file from a stream of bits and
 bytes into a series of meaningful tokens containing information that will be
 used by the later stages of the compiler.
 
+Design Decisions:
+
+Apart from the obvious design goal of implementing the Decaf lexical
+specification, the other main goal was to implement the spec in a straight
+forward way. The speed and efficiency of the running scanner were not
+a main concern during development. Although, source code readability,
+maintainability, and correctness definitely were. Thus, it was a conscious
+decision not to delve deeply into the many features of flex. The small set of
+features used were chosen because they made for a straight forward and easy to
+understand implementation.
+
 Building:
 
 To build the scanner, the following are known dependences: make, flex, and gcc.
